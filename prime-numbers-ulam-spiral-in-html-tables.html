@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Ulam Spiral Generator</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <style>
+        table {
+            border: 1px solid black;
+        }
+        td {
+            text-align: center;
+            height: 37px;
+            width: 37px;
+        }
+
+        .isPrime {
+            background-color: tomato;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ulam Spiral Generator</h1>
+    <label>Spiral size (odd number): </label>
+    <input type="number" class="spiralSize" value="3", step="2" min="1"> <button id="genButton" type="button">Generate</button>
+    <br><br>
+    <div class="primesList"></div>
+
+    <script>
+        const list = document.querySelector('.primesList');
+        var table = document.createElement('table');
+
+        const log10 = val => Math.log(val) / Math.LN10;
+
+        const fact = x => {
+            if (!x) return 1
+            return x * fact(x-1)
+        }
+
+        const isPrime = num => {
+            for ( let i = 2; i < num; i++ ) {
+                if ( num % i === 0 ) {
+                    return false
+                }
+            }
+            return true
+        }
+
+        const genPrimes = n => {
+            const primes = [2]
+            for (let i = 3; i < n; i+=2 ) {
+                if (isPrime(i)) {
+                    primes.push(i)
+                }
+            }
+            return primes
+        }
+        
+        const drawTable = order => {
+        
+            table.innerHTML = '';
+
+            for (let row = 0; row < order; row++) {
+                let tr = document.createElement('tr');
+                for (let cell = 0 ; cell < order; cell++) {
+                    td = document.createElement('td');
+                    tr.appendChild(td);
+                }
+                table.appendChild(tr);
+            }
+
+            list.appendChild(table);
+        }
+
+        
+        const drawNumbersSpiralInTable = (order) => {
+            if (order % 2 !== 1){
+                alert('Only odd numbers are permitted!');
+                return false;
+            }
+
+            drawTable(order);
+            
+            let tableMiddle = parseInt(table.childElementCount/2)
+            maxNumers = order * order;
+
+            let right = up = left = down = 1;
+            
+            let currentRow = currentCell = tableMiddle;
+            let rightUpCycle = true;
+
+            //exemplificação do que deve acontecer para montar o algoritmo abaixo
+            //table.children[currentRow].children[currentCell]; currentCell++ (direita)  - 2
+            //table.children[currentRow].children[currentCell]; currentRow--  (sobe)     - 3
+
+            //table.children[currentRow].children[currentCell]; currentCell-- (esquerda) - 4
+            //table.children[currentRow].children[currentCell]; currentCell-- (esquerda) - 5 
+            //table.children[currentRow].children[currentCell]; currentRow++  (desce)    - 6 
+            //table.children[currentRow].children[currentCell]; currentRow++  (desce)    - 7
+            
+            //table.children[currentRow].children[currentCell]; currentCell++ (direita)  - 8
+            //table.children[currentRow].children[currentCell]; currentCell++ (direita)  - 9 
+            //table.children[currentRow].children[currentCell]; currentCell++ (direita)  - 10
+            //table.children[currentRow].children[currentCell]; currentRow--  (sobe)     - 11
+            //table.children[currentRow].children[currentCell]; currentRow--  (sobe)     - 12
+            //table.children[currentRow].children[currentCell]; currentRow--  (sobe)     - 13
+
+            //table.children[currentRow].children[currentCell]; currentCell-- (esquerda) - 14
+            //table.children[currentRow].children[currentCell]; currentCell-- (esquerda) - 15
+            //table.children[currentRow].children[currentCell]; currentCell-- (esquerda) - 16
+            //table.children[currentRow].children[currentCell]; currentCell-- (esquerda) - 17
+            //table.children[currentRow].children[currentCell]; currentRow++  (desce)    - 18
+            //table.children[currentRow].children[currentCell]; currentRow++  (desce)    - 19
+            //table.children[currentRow].children[currentCell]; currentRow++  (desce)    - 20
+            //table.children[currentRow].children[currentCell]; currentRow++  (desce)    - 21
+            let currentNumber = 1;
+            let currentCycle = 1;
+            
+            table.children[currentRow].children[currentCell].innerHTML = 1;
+
+            const setCurrentNumber = (row, cell, number) => {
+                try {
+                    ++number;
+                    item = table.children[row].children[cell];
+                    item.innerHTML = number;
+                    
+                    if (isPrime(number)) {
+                        item.classList.add('isPrime');
+                    }
+                    
+                    return number;
+
+                } catch(e) {}
+            };
+
+            while (currentNumber <= maxNumers) {
+                
+
+                    if (rightUpCycle) {
+                        
+                        for (let startCycle = 1; startCycle <= currentCycle; startCycle++) {
+                            currentCell++;
+                            currentNumber = setCurrentNumber(currentRow, currentCell, currentNumber);
+                        }
+                        
+                        for (startCycle = 1; startCycle <= currentCycle; startCycle++) {
+                            currentRow--;
+                            currentNumber = setCurrentNumber(currentRow, currentCell, currentNumber);
+                        }
+                        
+                    } else {
+                        for (let startCycle = 1; startCycle <= currentCycle; startCycle++) {
+                            currentCell--;
+                            currentNumber = setCurrentNumber(currentRow, currentCell, currentNumber);
+                        }
+                        
+                        for (startCycle = 1; startCycle <= currentCycle; startCycle++) {
+                            currentRow++;
+                            currentNumber = setCurrentNumber(currentRow, currentCell, currentNumber);
+                        }
+                    }
+                    
+                    
+                rightUpCycle = !rightUpCycle;
+                currentCycle++;
+                
+            }
+        }
+
+        document.querySelector('#genButton').onclick = () => {
+            drawNumbersSpiralInTable(document.querySelector('.spiralSize').value)
+        };
+
+        document.querySelector('.spiralSize').onkeyup = (ev) => {
+            ev.key === 'Enter' ? drawNumbersSpiralInTable(ev.target.value) : '';
+        }
+    </script>
+</body>
+</html>
