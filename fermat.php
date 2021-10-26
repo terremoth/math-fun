@@ -30,6 +30,10 @@ while(true) {
     
     if ($result) {
         echo "TRUE - FOUND!!!".PHP_EOL;
+        // alertar o planeta aqui
+        // ganharei um nobel de matemática?
+        // mandar email pros meus pais, amigos, professores, I WILL BE A FUCKING BRUTE FORCE MATH GOD? Maybe
+        // não é impossível se vc não souber que é
         break;
     } else {
         echo "False".PHP_EOL;
